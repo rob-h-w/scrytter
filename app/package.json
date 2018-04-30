@@ -1,0 +1,21 @@
+{
+  "name": "scrytter",
+  "version": "0.0.1",
+  "description": "Scry your Twitter feed.",
+  "main": "index.js",
+  "repository": "git@github.com:rob-h-w/scrytter.git",
+  "author": "Rob Williamson <rob@robwilliamson.com>",
+  "license": "SEE LICENSE IN ../LICENSE",
+  "private": false,
+  "scripts": {
+    "start": "node ./src/index.js",
+    "debug": "node --inspect-brk=0.0.0.0:8926 ./src/index.js"
+  },
+  "dependencies": {
+    "arangojs": "^6.2.4",
+    "hapi": "^17.4.0",
+    "inert": "^5.1.0",
+    "lodash": "^4.17.10",
+    "twitter-node-client": "^0.0.6"
+  }
+}

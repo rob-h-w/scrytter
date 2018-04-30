@@ -1,0 +1,27 @@
+version: '3.2'
+
+services:
+  app:
+    env_file: .env
+    build: ./app
+    depends_on:
+      - db
+    entrypoint:
+      - yarn
+      - start
+    ports:
+      - 8925:8925
+  db:
+    env_file: .env
+    image: arangodb
+    ports:
+      - 8529:8529
+    volumes:
+      - type: volume
+        source: db
+        target: /var/lib/arangodb3
+        volume:
+          nocopy: true
+
+volumes:
+  db:
