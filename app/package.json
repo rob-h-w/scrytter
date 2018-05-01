@@ -17,6 +17,7 @@
     "inert": "^5.1.0",
     "lodash": "^4.17.10",
     "oauth": "^0.9.15",
+    "redis": "^2.8.0",
     "twitter-node-client": "^0.0.6"
   }
 }

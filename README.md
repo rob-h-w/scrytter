@@ -17,6 +17,10 @@ Scry your Twitter feed.
        ``` bash
        ARANGO_ROOT_PASSWORD=a password
        ```
+    1. Populate the Redis DB root password:
+       ``` bash
+       REDIS_ROOT_PASSWORD=another password
+       ```
 1. Run:
    ``` bash
    $ docker-compose up -d --build
