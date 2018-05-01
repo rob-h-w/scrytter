@@ -16,6 +16,7 @@
     "hapi": "^17.4.0",
     "inert": "^5.1.0",
     "lodash": "^4.17.10",
+    "oauth": "^0.9.15",
     "twitter-node-client": "^0.0.6"
   }
 }
