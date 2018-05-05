@@ -1,6 +1,9 @@
 const Boom = require('boom');
 const Path = require('path');
-const { getAuthenticationRedirectUri } = require('./twitter');
+const {
+  getAccessToken,
+  getAuthenticationRedirectUri
+} = require('./twitter');
 
 module.exports = {
   routes: {
@@ -23,6 +26,7 @@ module.exports = {
         try {
           return await getAuthenticationRedirectUri();
         } catch (err) {
+          console.error(err);
           if (!err.isBoom) {
             if (!(err instanceof Error)) {
               err = new Boom(err.data, { statusCode: err.statusCode });
@@ -40,7 +44,7 @@ module.exports = {
       path: '/auth_callback',
       handler: async (request, h) => {
         // TODO: Do something useful with the token & verifier.
-        return request.query
+        return await getAccessToken(request.query);
       }
     }
   ]

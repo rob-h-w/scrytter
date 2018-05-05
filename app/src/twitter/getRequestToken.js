@@ -1,19 +1,6 @@
-const { OAuth } = require('oauth');
+const oauth = require('./getOauth')();
 
-const uri = 'https://api.twitter.com/oauth/request_token';
-
-module.exports = async function getRequestToken({ callbackUri = 'http://localhost:8925/auth_callback' } = {}) {
-  const authenticate = '';
-  const oauth = new OAuth(
-    uri,
-    null,
-    process.env.TWITTER_KEY,
-    process.env.TWITTER_SECRET,
-    '1.0A',
-    callbackUri,
-    'HMAC-SHA1'
-  );
-
+module.exports = async function getRequestToken() {
   return new Promise((resolve, reject) => {
     try {
       oauth.getOAuthRequestToken(

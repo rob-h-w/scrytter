@@ -1,4 +1,6 @@
 const Hapi = require('hapi');
+
+const { initializeApp } = require('./application');
 const { apiRoutes, routes } = require('./routes');
 
 const server = Hapi.server({
@@ -9,6 +11,7 @@ const server = Hapi.server({
 
 async function start() {
     try {
+        await initializeApp();
         await server.register(require('inert'));
 
         server.route(apiRoutes);
