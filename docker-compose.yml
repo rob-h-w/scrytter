@@ -6,6 +6,7 @@ services:
     build: ./app
     depends_on:
       - db
+      - redis
     entrypoint:
       - yarn
       - start

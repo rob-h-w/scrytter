@@ -7,4 +7,3 @@ services:
       - debug
     ports:
       - 8926:8926
-  db:
