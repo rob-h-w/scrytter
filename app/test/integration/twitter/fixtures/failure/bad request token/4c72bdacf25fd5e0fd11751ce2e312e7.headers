@@ -1,0 +1,44 @@
+{
+  "statusCode": 200,
+  "headers": {
+    "cache-control": "no-cache, no-store, must-revalidate, pre-check=0, post-check=0",
+    "connection": "close",
+    "content-length": "121",
+    "content-security-policy": "default-src 'none'; connect-src 'self'; font-src https://abs.twimg.com https://abs-0.twimg.com data:; frame-src 'self' twitter:; img-src https://abs.twimg.com https://*.twimg.com https://pbs.twimg.com data:; media-src 'none'; object-src 'none'; script-src https://abs.twimg.com https://abs-0.twimg.com https://twitter.com https://mobile.twitter.com; style-src https://abs.twimg.com https://abs-0.twimg.com; report-uri https://twitter.com/i/csp_report?a=NVQWGYLXFVWG6Z3JNY%3D%3D%3D%3D%3D%3D&ro=false;",
+    "content-type": "text/html;charset=utf-8",
+    "date": "Wed, 09 May 2018 16:22:47 GMT",
+    "expires": "Tue, 31 Mar 1981 05:00:00 GMT",
+    "last-modified": "Wed, 09 May 2018 16:22:47 GMT",
+    "ml": "A",
+    "pragma": "no-cache",
+    "server": "tsa_o",
+    "set-cookie": [
+      "personalization_id=\"v1_4K2W1I78brDj2TgOPf9MCw==\"; Expires=Fri, 08 May 2020 16:22:47 GMT; Path=/; Domain=.twitter.com",
+      "guest_id=v1%3A152588296740937269; Expires=Fri, 08 May 2020 16:22:47 GMT; Path=/; Domain=.twitter.com"
+    ],
+    "status": "200 OK",
+    "strict-transport-security": "max-age=631138519",
+    "x-connection-hash": "8fb2b4f03b6b5bd306413cedd2442c9d",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "x-response-time": "123",
+    "x-transaction": "00f00562002deb41",
+    "x-twitter-response-tags": "BouncerCompliant",
+    "x-ua-compatible": "IE=edge,chrome=1",
+    "x-xss-protection": "1; mode=block; report=https://twitter.com/i/xss_report"
+  },
+  "url": "https://api.twitter.com:443/oauth/request_token",
+  "time": 213,
+  "request": {
+    "method": "POST",
+    "headers": {
+      "Authorization": "OAuth oauth_callback=\"http%3A%2F%2Flocalhost%3A8925%2Fauth_callback\",oauth_consumer_key=\"TWITTER_KEY\",oauth_nonce=\"1NZolUm09SYWxyTs8uczyC3Yu5h4ZZcL\",oauth_signature_method=\"HMAC-SHA1\",oauth_timestamp=\"1525882967\",oauth_version=\"1.0A\",oauth_signature=\"NwIRdx1SPqMN5HRiofwp7eHwUWU%3D\"",
+      "Host": "api.twitter.com",
+      "Accept": "*/*",
+      "Connection": "close",
+      "User-Agent": "Node authentication",
+      "Content-length": 0,
+      "Content-Type": "application/x-www-form-urlencoded"
+    }
+  }
+}

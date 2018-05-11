@@ -1,8 +1,11 @@
+const Hapi = require('hapi');
 const redis = require('redis');
 const { promisify } = require('util');
 
-const application = {
-};
+const { apiRoutes, routes } = require('./routes');
+
+const application = {};
+
 const rOptions = {
   db: 0,
   host: 'redis',
@@ -37,7 +40,31 @@ async function initializeApp() {
   initialized = true;
 }
 
+async function start() {
+    try {
+        const server = Hapi.server({
+            host: '0.0.0.0',
+            port: 8925,
+            routes
+        });
+
+        await initializeApp();
+        await server.register(require('inert'));
+
+        server.route(apiRoutes);
+
+        await server.start();
+        console.log('Server started at: ' + server.info.uri);
+        return server;
+    }
+    catch (err) {
+        console.error(err);
+        process.exit(1);
+    }
+}
+
 module.exports = {
   application,
-  initializeApp
+  initializeApp,
+  start
 };

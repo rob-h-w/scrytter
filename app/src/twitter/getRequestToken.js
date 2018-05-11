@@ -17,9 +17,9 @@ module.exports = async function getRequestToken() {
           });
         }
       );
-    } catch (e) {
+    } catch (err) {
       console.error(err);
-      return reject(e);
+      return reject(err);
     }
   });
 }

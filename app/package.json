@@ -8,8 +8,8 @@
   "license": "SEE LICENSE IN ../LICENSE",
   "private": false,
   "scripts": {
-    "start": "node ./src/index.js",
-    "debug": "node --inspect-brk=0.0.0.0:8926 ./src/index.js"
+    "debug": "node --inspect-brk=0.0.0.0:8926 ./src/index.js",
+    "start": "node ./src/index.js"
   },
   "dependencies": {
     "arangojs": "^6.2.4",
@@ -19,5 +19,12 @@
     "oauth": "^0.9.15",
     "redis": "^2.8.0",
     "twitter-node-client": "^0.0.6"
+  },
+  "devDependencies": {
+    "code": "^5.2.0",
+    "lab": "^15.4.1",
+    "proxyquire": "^2.0.1",
+    "replayer": "^2.2.3",
+    "sinon": "^5.0.3"
   }
 }

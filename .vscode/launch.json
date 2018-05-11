@@ -13,6 +13,16 @@
       "localRoot": "${workspaceFolder}/app",
       "remoteRoot": "/usr/app",
       "protocol": "inspector"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Test",
+      "port": 8927,
+      "address": "localhost",
+      "localRoot": "${workspaceFolder}/app",
+      "remoteRoot": "/usr/app",
+      "protocol": "inspector"
     }
   ]
 }
