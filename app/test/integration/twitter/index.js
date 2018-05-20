@@ -2,30 +2,14 @@ const { expect } = require('code');
 const fs = require('fs');
 const { after, before, beforeEach, describe, it } = exports.lab = require('lab').script();
 const path = require('path');
-const proxyquire = require('proxyquire').noPreserveCache().noCallThru();
-const replayer = require('replayer');
+const proxyquire = require('proxyquire').noCallThru();
 const sinon = require('sinon');
 
-const fixturesRoot = path.join(__dirname, 'fixtures');
-[
-  'TWITTER_KEY',
-  'TWITTER_SECRET',
-  'TWITTER_TEST_ACCESS_TOKEN',
-  'TWITTER_TEST_ACCESS_TOKEN_SECRET',
-  'TWITTER_TEST_USER_ID',
-  'TWITTER_TEST_SCREEN_NAME'
-].forEach((substitute) => replayer.substitute(substitute, () => process.env[substitute]));
+const replayer = require('./replayer');
 
-const redisStore = {}
-const redisClient = {
-  on: sinon.stub(),
-  set: sinon.spy((key, val) => {
-    redisStore[key] = val;
-  }),
-  getAsync: sinon.spy(async (key) => {
-    return redisStore[key];
-  })
-};
+const fixturesRoot = path.join(__dirname, 'fixtures');
+
+const redisClient = require('./redisStub')();
 const application = {
   redis: redisClient
 };
@@ -92,7 +76,7 @@ describe('twitter', () => {
 
         beforeEach(async () => {
           try {
-            redisStore.badToken = 'badSecret';
+            redisClient.set('badToken', 'badSecret');
             await twitter.getAccessToken({
               oauth_token: 'badToken',
               oauth_verifier: 'badVerifier'

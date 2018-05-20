@@ -1,5 +1,5 @@
 const { expect } = require('code');
-const { describe, beforeEach, it } = exports.lab = require('lab').script();
+const { beforeEach, describe, it } = exports.lab = require('lab').script();
 const oAuth = require('oauth');
 const proxyquire = require('proxyquire').noCallThru();
 const sinon = require('sinon');

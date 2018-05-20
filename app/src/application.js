@@ -1,4 +1,5 @@
-const Hapi = require('hapi');
+const hapi = require('hapi');
+const { init } = require('./arango');
 const redis = require('redis');
 const { promisify } = require('util');
 
@@ -19,6 +20,8 @@ async function initializeApp() {
   if (initialized) {
     return;
   }
+
+  await init();
 
   await rClient;
   application.redis = rClient;
@@ -42,7 +45,7 @@ async function initializeApp() {
 
 async function start() {
     try {
-        const server = Hapi.server({
+        const server = hapi.server({
             host: '0.0.0.0',
             port: 8925,
             routes

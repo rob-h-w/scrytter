@@ -1,7 +1,7 @@
 const assert = require('assert');
 const boom = require('boom');
 const { expect } = require('code');
-const { after, before, describe, beforeEach, it } = exports.lab = require('lab').script();
+const { after, before, beforeEach, describe, it } = exports.lab = require('lab').script();
 const proxyquire = require('proxyquire').noCallThru();
 const sinon = require('sinon');
 

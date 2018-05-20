@@ -1,5 +1,5 @@
 const { expect } = require('code');
-const { describe, beforeEach, it } = exports.lab = require('lab').script();
+const { beforeEach, describe, it } = exports.lab = require('lab').script();
 const proxyquire = require('proxyquire').noCallThru();
 
 let twitter;
