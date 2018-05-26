@@ -1,29 +1,24 @@
 const db = require('../../getDatabase')();
+const ensureCollection = require('../../ensureCollection')(db);
+const ensureEdgeCollection = require('../../ensureEdgeCollection')(db);
 const { dbName } = require('../../dbName');
-const { names } = require('./collection');
+const { collections, edgeCollections, names } = require('./collection');
 
 module.exports = async function setup() {
   db.useDatabase(dbName);
   await db.get();
 
-  const action = String(function (params) {
-    const { db } = require('@arangodb');
-    const { metadataName } = params;
+  for(let i = 0; i < collections.length; i++) {
+    await ensureCollection(collections[i]);
+  }
 
-    const metadata = db._create(metadataName);
+  for(let i = 0; i < edgeCollections.length; i++) {
+    await ensureEdgeCollection(edgeCollections[i]);
+  }
 
-    metadata.save({
-      _key: 'version',
-      value: 1
-    });
+  const metadata = db.collection(names.metadata);
+  await metadata.save({
+    _key: 'version',
+    value: 1
   });
-
-  const result = await db.transaction({},
-    action,
-    {
-      metadataName: names.metadata
-    }
-  );
-
-  return result;
 };

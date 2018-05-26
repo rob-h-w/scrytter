@@ -5,10 +5,10 @@ const getCurrentVersion = require('./getCurrentVersion');
 
 module.exports = function initTo(desiredVersion) {
   return async function init(current) {
-    const currentVersionSpecifiedExternally = _.isInteger(current);
     await ensureDb();
 
-    let currentVersion = currentVersionSpecifiedExternally ? current : await getCurrentVersion();
+    const initialVersion = _.isInteger(current) ? current : await getCurrentVersion();
+    let currentVersion = initialVersion;
     const rollback = initTo(currentVersion);
 
     if (currentVersion === desiredVersion) {
@@ -16,27 +16,26 @@ module.exports = function initTo(desiredVersion) {
     }
 
     const delta = currentVersion < desiredVersion ? 1 : -1;
-    const forwards = delta === 1 ? 'setup' : 'rollback';
+    const rollingBack = delta === -1;
+    const modification = delta === 1 ? 'setup' : 'rollback';
 
     while(currentVersion !== desiredVersion) {
       const nextVersion = currentVersion + delta;
-      const requireVersion = delta === 1 ? nextVersion : currentVersion;
+      const requireVersion = rollingBack ? currentVersion : nextVersion;
       const migration = require(`./v${requireVersion}`);
 
       try {
-        await migration[forwards]();
+        await migration[modification]();
         currentVersion = nextVersion;
-        if (delta > 0) {
+        if (!rollingBack) {
           await migration.verify();
         }
       } catch (e) {
-        console.error(e);
-
-        if (!currentVersionSpecifiedExternally) {
+        if (!rollingBack) {
           await rollback(currentVersion);
         }
 
-        console.error(`exiting with db at version ${currentVersion}`);
+        console.error(`exiting with db at version ${initialVersion}`);
         throw e;
       }
     }

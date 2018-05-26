@@ -157,7 +157,7 @@ describe('arango/initTo', () => {
     });
   });
 
-  describe.skip('init to 2 from 0', () => {
+  describe('init to 2 from 0', () => {
     beforeEach(() => {
       getCurrentVersion.resolves(0);
       initTo = proxyquire(
@@ -193,6 +193,70 @@ describe('arango/initTo', () => {
       it('does not call rollback', () => {
         expect(migration1.rollback.called).to.be.false();
         expect(migration2.rollback.called).to.be.false();
+      });
+    });
+
+    describe('v2 setup fails', () => {
+      let error;
+
+      beforeEach(async () => {
+        migration2.setup.rejects(new Error());
+
+        try {
+          result = await init();
+        } catch (e) {
+          error = e;
+        }
+      });
+
+      it('calls each setup a maximum of once', () => {
+        expect(migration1.setup.calledOnce).to.be.true();
+        expect(migration2.setup.calledOnce).to.be.true();
+      });
+
+      it('calls migration.setup', () => {
+        expect(migration1.setup.called).to.be.true();
+        expect(migration2.setup.called).to.be.true();
+      });
+
+      it('calls migration.verify on migration 1 only', () => {
+        expect(migration1.verify.called).to.be.true();
+        expect(migration2.verify.called).to.be.false();
+      });
+
+      it('does call rollback only for migration 1', () => {
+        expect(migration1.rollback.called).to.be.true();
+        expect(migration2.rollback.called).to.be.false();
+      });
+    });
+
+    describe('v2 verify fails and rollback fails', () => {
+      let error;
+
+      beforeEach(async () => {
+        migration2.verify.rejects(new Error());
+        migration2.rollback.rejects(new Error);
+
+        try {
+          result = await init();
+        } catch (e) {
+          error = e;
+        }
+      });
+
+      it('calls migration.setup', () => {
+        expect(migration1.setup.called).to.be.true();
+        expect(migration2.setup.called).to.be.true();
+      });
+
+      it('calls migration.verify', () => {
+        expect(migration1.verify.called).to.be.true();
+        expect(migration2.verify.called).to.be.true();
+      });
+
+      it('calls rollback on migration 2', () => {
+        expect(migration1.rollback.called).to.be.false();
+        expect(migration2.rollback.called).to.be.true();
       });
     });
   });

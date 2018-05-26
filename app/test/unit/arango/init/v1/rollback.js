@@ -3,6 +3,8 @@ const { beforeEach, describe, it } = exports.lab = require('lab').script();
 const proxyquire = require('proxyquire').noCallThru();
 const sinon = require('sinon');
 
+const { names } = require('../../../../../src/arango/init/v1/collection');
+
 const scrytterDbInfo = {
   name: 'scrytter',
   id: '225443',
@@ -12,21 +14,24 @@ const scrytterDbInfo = {
 
 describe('v1/rollback', () => {
   let db;
-  let metadata;
+  let collections;
   let rollback;
 
   beforeEach(() => {
-    metadata = {
-      create: sinon.stub().resolves(),
-      drop: sinon.stub().resolves()
-    };
+    collections = {};
+    Object.values(names).forEach((name) => {
+      collections[name] = {
+        drop: sinon.stub().resolves()
+      };
+    });
+
+    function collection(name) {
+      return collections[name];
+    }
+
     db = {
-      collection: sinon.stub().withArgs('metadata').returns(metadata),
-      collections: sinon.stub().resolves([]),
-      createDatabase: sinon.stub(),
+      collection: sinon.spy(collection),
       get: sinon.stub().resolves(scrytterDbInfo),
-      listCollections: sinon.stub().resolves([ 'metadata' ]),
-      listDatabases: sinon.stub().resolves([ '_system', 'scrytter' ]),
       useDatabase: sinon.stub()
     };
     rollback = proxyquire(
@@ -44,38 +49,19 @@ describe('v1/rollback', () => {
   describe('when called', () => {
     let result;
 
-    describe('with no prior collections', () => {
-      beforeEach(async () => {
-        db.collections = sinon.stub().resolves([]);
-        result = await rollback();
-      });
-
-      it('uses the right database', () => {
-        expect(db.useDatabase.calledWith('scrytter')).to.be.true();
-        expect(db.get.called).to.be.true();
-      });
-
-      it('does not drop metadata', () => {
-        expect(metadata.drop.called).to.be.false();
-      });
+    beforeEach(async () => {
+      result = await rollback();
     });
 
-    describe('prior collections', () => {
-      beforeEach(async () => {
-        db.collections = sinon.stub().resolves([
-          {
-            name: 'metadata'
-          },
-          {
-            name: 'ignore this'
-          }
-        ]);
-        result = await rollback();
-      });
+    it('uses the right database', () => {
+      expect(db.useDatabase.calledWith('scrytter')).to.be.true();
+      expect(db.get.called).to.be.true();
+    });
 
-      it('drops only metadata', () => {
-        expect(db.collection.calledOnceWithExactly('metadata')).to.be.true();
-        expect(metadata.drop.calledOnce).to.be.true();
+    it('drops all v1 collections', () => {
+      Object.values(names).forEach((name) => {
+        expect(db.collection.calledWith(name)).to.be.true();
+        expect(collections[name].drop.calledOnce).to.be.true();
       });
     });
   });
