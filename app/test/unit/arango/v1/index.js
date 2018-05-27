@@ -28,7 +28,7 @@ describe('v1', () => {
       useDatabase: sinon.stub()
     };
     v1 = proxyquire(
-      '../../../../../src/arango/init/v1',
+      '../../../../src/arango/v1',
       {
         './rollback': sinon.stub(),
         './setup': sinon.stub(),

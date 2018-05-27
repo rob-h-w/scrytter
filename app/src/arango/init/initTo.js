@@ -22,7 +22,7 @@ module.exports = function initTo(desiredVersion) {
     while(currentVersion !== desiredVersion) {
       const nextVersion = currentVersion + delta;
       const requireVersion = rollingBack ? currentVersion : nextVersion;
-      const migration = require(`./v${requireVersion}`);
+      const migration = require(`../v${requireVersion}`);
 
       try {
         await migration[modification]();

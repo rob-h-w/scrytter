@@ -4,7 +4,7 @@ const proxyquire = require('proxyquire').noCallThru();
 const sinon = require('sinon');
 
 const { collections, edgeCollections, names } =
-  require('../../../../../src/arango/init/v1/collection');
+  require('../../../../src/arango/v1/collection');
 
 const scrytterDbInfo = {
   name: 'scrytter',
@@ -40,12 +40,11 @@ describe('v1/setup', () => {
     ensureEdgeCollection = sinon.stub().resolves();
     ensureEdgeCollectionMaker = sinon.stub().returns(ensureEdgeCollection);
     setup = proxyquire(
-      '../../../../../src/arango/init/v1/setup',
+      '../../../../src/arango/v1/setup',
       {
-        '../../ensureCollection': ensureCollectionMaker,
-        '../../ensureEdgeCollection': ensureEdgeCollectionMaker,
-        '../../getDatabase': sinon.stub().returns(db),
-        '../v1': {}
+        '../ensureCollection': ensureCollectionMaker,
+        '../ensureEdgeCollection': ensureEdgeCollectionMaker,
+        '../getDatabase': sinon.stub().returns(db)
       }
     );
   });

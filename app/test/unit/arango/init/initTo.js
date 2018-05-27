@@ -30,7 +30,8 @@ describe('arango/initTo', () => {
       '../../../../src/arango/init/initTo',
       {
         './ensureDb': ensureDb,
-        './getCurrentVersion': getCurrentVersion
+        './getCurrentVersion': getCurrentVersion,
+        '../v1': {}
       });
   });
 
@@ -50,7 +51,7 @@ describe('arango/initTo', () => {
         {
           './ensureDb': ensureDb,
           './getCurrentVersion': getCurrentVersion,
-          './v1': migration1
+          '../v1': migration1
         });
       init = initTo(1);
     });
@@ -129,32 +130,6 @@ describe('arango/initTo', () => {
         expect(migration1.rollback.called).to.be.true();
       });
     });
-
-    describe.skip('v1 db not created', () => {
-      beforeEach(async () => {
-        db.listDatabases = sinon.stub().resolves([ '_system' ]);
-        await init();
-      });
-
-      it('creates the scrytter database', () => {
-        expect(db.createDatabase.calledWith('scrytter')).to.be.true();
-      });
-    });
-
-    describe.skip('v1 db created', () => {
-      beforeEach(async () => {
-        await init();
-      });
-
-      it('does not create the scrytter database', () => {
-        expect(db.createDatabase.calledWith('scrytter')).to.be.false();
-      });
-
-      it('gets the database', () => {
-        expect(db.useDatabase.calledWith('scrytter')).to.be.true();
-        expect(db.get.called).to.be.true();
-      });
-    });
   });
 
   describe('init to 2 from 0', () => {
@@ -165,8 +140,8 @@ describe('arango/initTo', () => {
         {
           './ensureDb': ensureDb,
           './getCurrentVersion': getCurrentVersion,
-          './v1': migration1,
-          './v2': migration2
+          '../v1': migration1,
+          '../v2': migration2
         });
       init = initTo(2);
     });
@@ -269,7 +244,7 @@ describe('arango/initTo', () => {
         {
           './ensureDb': ensureDb,
           './getCurrentVersion': getCurrentVersion,
-          './v1': migration1
+          '../v1': migration1
         });
       init = initTo(1);
       result = await init();

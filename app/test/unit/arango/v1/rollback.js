@@ -3,7 +3,7 @@ const { beforeEach, describe, it } = exports.lab = require('lab').script();
 const proxyquire = require('proxyquire').noCallThru();
 const sinon = require('sinon');
 
-const { names } = require('../../../../../src/arango/init/v1/collection');
+const { names } = require('../../../../src/arango/v1/collection');
 
 const scrytterDbInfo = {
   name: 'scrytter',
@@ -35,9 +35,9 @@ describe('v1/rollback', () => {
       useDatabase: sinon.stub()
     };
     rollback = proxyquire(
-      '../../../../../src/arango/init/v1/rollback',
+      '../../../../src/arango/v1/rollback',
       {
-        '../../getDatabase': sinon.stub().returns(db)
+        '../getDatabase': sinon.stub().returns(db)
       }
     );
   });

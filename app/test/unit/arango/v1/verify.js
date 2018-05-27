@@ -40,9 +40,9 @@ describe('v1/verify', () => {
       useDatabase: sinon.stub()
     };
     verify = proxyquire(
-      '../../../../../src/arango/init/v1/verify',
+      '../../../../src/arango/v1/verify',
       {
-        '../../getDatabase': sinon.stub().returns(db)
+        '../getDatabase': sinon.stub().returns(db)
       }
     );
   });

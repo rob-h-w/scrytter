@@ -11,17 +11,17 @@ describe('arango', () => {
       '../../../src/arango',
       {
         './init': sinon.stub(),
-        './setAccessKeys': sinon.stub()
+        './storeUser': sinon.stub()
       });
   });
 
-  describe('setAccessKeys', () => {
+  describe('storeUser', () => {
     it('exists', () => {
-      expect(arango.setAccessKeys).to.exist();
+      expect(arango.storeUser).to.exist();
     });
 
     it('is a function', () => {
-      expect(arango.setAccessKeys).to.be.a.function();
+      expect(arango.storeUser).to.be.a.function();
     });
   });
 

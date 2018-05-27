@@ -1,7 +1,7 @@
 const init = require('./init');
-const setAccessKeys = require('./setAccessKeys');
+const storeUser = require('./storeUser');
 
 module.exports = {
   init,
-  setAccessKeys
+  storeUser
 };

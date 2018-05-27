@@ -20,11 +20,10 @@ module.exports = async function getAccessToken({ oauth_token, oauth_verifier}) {
           return reject(err);
         }
 
-        return resolve({
-          oauth_access_token,
-          oauth_access_token_secret,
-          results
-        });
+        results.oauth_access_token = oauth_access_token;
+        results.oauth_access_token_secret = oauth_access_token_secret;
+
+        return resolve(results);
       }
     );
   });

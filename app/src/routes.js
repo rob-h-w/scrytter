@@ -1,6 +1,7 @@
 const Boom = require('boom');
 const Path = require('path');
 
+const { storeUser } = require('./arango');
 const {
   getAccessToken,
   getAuthenticationRedirectUri
@@ -37,8 +38,9 @@ module.exports = {
       path: '/auth_callback',
       handler: async (request, h) => {
         try {
-          // TODO: Do something useful with the token & verifier.
-          return await getAccessToken(request.query);
+          const tokenResponse = await getAccessToken(request.query);
+          await storeUser(tokenResponse);
+          return tokenResponse;
         } catch (err) {
           handleError(err);
         }

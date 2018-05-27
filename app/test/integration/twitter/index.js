@@ -120,7 +120,8 @@ describe('twitter', () => {
         expect(Object.keys(accessToken)).to.include([
           'oauth_access_token',
           'oauth_access_token_secret',
-          'results'
+          'screen_name',
+          'user_id'
         ]);
       });
     });

@@ -21,6 +21,10 @@ Scry your Twitter feed.
        ``` bash
        REDIS_ROOT_PASSWORD=another password
        ```
+    1. Populate the user crypto key for storing secrets.
+       ``` bash
+       USER_CRYPTO_KEY=a secret key - keys to the kingdom.
+       ```
 1. <a name="integration-test-env"></a> To run the integration tests, add the following values to `.env`:
     1. Your test Twitter access token:
        ``` bash
