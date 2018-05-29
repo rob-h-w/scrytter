@@ -1,4 +1,5 @@
-const db = require('./getDatabase')();
+const { dbName } = require('./dbName');
+const db = require('./getDatabase')({ database: dbName });
 const ensureCollection = require('./ensureCollection')(db);
 const { encrypt } = require('./secret');
 const { names } = require('./v1/collection');

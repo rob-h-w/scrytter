@@ -1,7 +1,7 @@
-const db = require('../getDatabase')();
+const { dbName } = require('../dbName');
+const db = require('../getDatabase')({ database: dbName });
 const ensureCollection = require('../ensureCollection')(db);
 const ensureEdgeCollection = require('../ensureEdgeCollection')(db);
-const { dbName } = require('../dbName');
 const { collections, edgeCollections, names } = require('./collection');
 
 module.exports = async function setup() {

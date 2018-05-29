@@ -37,3 +37,13 @@ services:
       NODE_OPTIONS: '--inspect=0.0.0.0:8927'
     ports:
       - 8927:8927
+  api:
+    env_file: .env
+    build: ./app
+    entrypoint:
+      - ./node_modules/.bin/lab
+      - test/api
+    environment:
+      NODE_OPTIONS: '--inspect=0.0.0.0:8927'
+    ports:
+      - 8927:8927

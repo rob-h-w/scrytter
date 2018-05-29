@@ -1,5 +1,5 @@
 const { dbName } = require('../dbName');
-const db = require('../getDatabase')();
+const db = require('../getDatabase')({ database: dbName });
 
 module.exports = async function ensureDb() {
   db.useDatabase('_system');

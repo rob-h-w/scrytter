@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
-const db = require('../getDatabase')();
 const { dbName } = require('../dbName');
+const db = require('../getDatabase')({ database: dbName });
 const { names } = require('./collection');
 
 module.exports = async function verify() {

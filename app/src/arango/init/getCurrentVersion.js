@@ -1,5 +1,5 @@
 const { dbName } = require('../dbName');
-const db = require('../getDatabase')();
+const db = require('../getDatabase')({ database: dbName });
 
 const metadataName = 'metadata';
 
@@ -13,11 +13,13 @@ module.exports = async function getCurrentVersion() {
   }
 
   const metadata = await db.collection(metadataName);
+
   try {
     const version = await metadata.document('version');
     return version.value;
-  } catch {
+  } catch (e) {
     await metadata.drop();
     return 0;
+    throw e;
   }
 };
