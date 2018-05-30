@@ -10,7 +10,7 @@ const rOptions = {
   host: 'redis',
   password: process.env.REDIS_ROOT_PASSWORD
 };
-const rClient = redis.createClient(rOptions);
+let rClient = redis.createClient(rOptions);
 
 let initialized = false;
 
@@ -21,7 +21,7 @@ async function initializeApp() {
 
   await init();
 
-  await rClient;
+  rClient = await rClient;
   application.redis = rClient;
 
   application.redis.on('error', console.error);

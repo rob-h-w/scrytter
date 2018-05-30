@@ -23,6 +23,8 @@
   "devDependencies": {
     "code": "^5.2.0",
     "lab": "^15.4.1",
+    "mockery": "^2.1.0",
+    "nock": "^9.3.0",
     "proxyquire": "^2.0.1",
     "replayer": "^2.2.3",
     "sinon": "^5.0.3"
