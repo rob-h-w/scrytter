@@ -1,9 +1,7 @@
 const Boom = require('boom');
 const Path = require('path');
 
-const { storeUser } = require('./arango');
 const {
-  getAccessToken,
   getAuthenticationRedirectUri
 } = require('./twitter');
 const { handleError } = require('./util');
@@ -36,15 +34,7 @@ module.exports = {
     {
       method: 'GET',
       path: '/auth_callback',
-      handler: async (request, h) => {
-        try {
-          const tokenResponse = await getAccessToken(request.query);
-          await storeUser(tokenResponse);
-          return tokenResponse;
-        } catch (err) {
-          handleError(err);
-        }
-      }
+      handler: require('./operations/authCallback')
     }
   ]
 };

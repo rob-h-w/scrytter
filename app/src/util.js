@@ -30,6 +30,12 @@ function boomifyStatusCode(root, selector = 'statusCode') {
   switch(statusCode) {
     case 401:
       return boom.unauthorized(root);
+    case 502:
+      return boom.badGateway(root);
+    case 503:
+      return boom.serverUnavailable(root);
+    case 504:
+      return boom.gatewayTimeout(root);
     default:
       assert.fail(`No handler for statusCode ${statusCode}`);
   }
@@ -46,10 +52,11 @@ function handleError(err, selector) {
 
   console.error(err);
   if (!err.isBoom) {
-    if (!(err instanceof Error)) {
-      err = boomifyStatusCode(err, selector);
-    } else {
+    if (err instanceof Error) {
       err = boom.boomify(err);
+      err.output.payload.message = err.message;
+    } else {
+      err = boomifyStatusCode(err, selector);
     }
   }
 

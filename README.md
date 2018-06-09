@@ -73,7 +73,7 @@ $ docker-compose -f docker-compose.yml -f docker-compose.test.yml up --build uni
 ### Integration
 To use replayer to replay integration tests, refer to [setting up the environment variables](#integration-test-env), then run:
 ``` bash
-$ docker-compose -f docker-compose.yml -f docker-compose.test.yml up -build integration
+$ docker-compose -f docker-compose.yml -f docker-compose.test.yml up --build integration
 ```
 
 ### Integration - recording

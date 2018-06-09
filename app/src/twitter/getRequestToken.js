@@ -6,7 +6,6 @@ module.exports = async function getRequestToken() {
       oauth.getOAuthRequestToken(
         (err, oauth_token, oauth_token_secret,  results) => {
           if (err) {
-            console.error(err);
             return reject(err);
           }
 
@@ -18,7 +17,6 @@ module.exports = async function getRequestToken() {
         }
       );
     } catch (err) {
-      console.error(err);
       return reject(err);
     }
   });

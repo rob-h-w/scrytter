@@ -49,6 +49,21 @@ describe('util', () => {
         name: 'with function selector',
         boomified: boom.unauthorized(),
         params: [{ code: 1 }, (obj) => { return obj.code + 400; }]
+      },
+      {
+        name: 'Bad Gateway',
+        boomified: boom.badGateway(),
+        params: [{ statusCode: 502 }]
+      },
+      {
+        name: 'Service Unavailable',
+        boomified: boom.serverUnavailable(),
+        params: [{ statusCode: 503 }]
+      },
+      {
+        name: 'Gateway Timeout',
+        boomified: boom.gatewayTimeout(),
+        params: [{ statusCode: 504 }]
       }
     ].forEach((c) => {
       it(c.name, () => {
