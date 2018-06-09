@@ -21,7 +21,6 @@ module.exports = async (request, h) => {
       } else {
         err.data = errorMessage;
       }
-
     }
 
     handleError(err);

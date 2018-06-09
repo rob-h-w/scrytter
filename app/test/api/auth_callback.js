@@ -1,30 +1,19 @@
-const rawArango = require('arangojs');
 const { expect } = require('code');
 const { afterEach, after, beforeEach, before, describe, it } = exports.lab = require('lab').script();
 const mockery = require('mockery');
 const nock = require('nock');
-const sinon = require('sinon');
+
+const mockArango = require('./mockArango');
+const mockRedis = require('./mockRedis');
 
 const root = 'http://localhost';
-const collectionsList = [
-  'metadata',
-  'quotes',
-  'replies',
-  'retweets',
-  'tweets',
-  'users'
-];
 
 describe('/auth_callback', () => {
   let application;
   let arangojs;
-  let collection;
-  let databaseInstance;
-  let metadata;
-  let rClient;
-  let redis;
+  let arangoMocks;
+  let redisMocks;
   let response;
-  let rState;
   let server;
 
   before(() => {
@@ -36,58 +25,11 @@ describe('/auth_callback', () => {
   });
 
   beforeEach(async () => {
-    const rawDb = new rawArango.Database({
-      url: 'http://db:8529'
-    });
-    databaseInstance = sinon.stub(rawDb);
-    arangojs = {};
-    Object.keys(rawArango).forEach(member => {
-      arangojs[member] = sinon.stub(rawArango, member);
-    });
-    collection = sinon.stub().returns({
-      create: sinon.stub().resolves(),
-      drop: sinon.stub().resolves(),
-      save: sinon.stub().resolves()
-    });
-    metadata = {
-      create: sinon.stub().resolves(),
-      document: sinon.stub().resolves({ value: 1 }),
-      drop: sinon.stub().resolves(),
-      save: sinon.stub().resolves()
-    };
-    collection.withArgs('metadata').returns(metadata);
-    databaseInstance.collection = collection;
-    databaseInstance.collections.resolves(collectionsList.map(collection => { return { name: collection }; }));
-    databaseInstance.edgeCollection = sinon.stub().returns({
-      create: sinon.stub().resolves(),
-      drop: sinon.stub().resolves()
-    });
-    databaseInstance.get.resolves();
-    databaseInstance.listDatabases.resolves([ 'scrytter' ]);
-    arangojs.Database.returns(databaseInstance);
-
-    rState = {};
-    rClient = {
-      __proto__: {},
-      get: sinon.spy((key, callback) => {
-        if (rState[key]) {
-          callback(null, rState[key]);
-        } else {
-          callback(new Error(`${key} not set.`));
-        }
-      }),
-      on: sinon.stub()
-    };
-
-    for (let key in rClient) {
-      const value = rClient[key];
-      rClient.__proto__[key] = value;
-    }
-    redis = {
-      createClient: sinon.stub().resolves(rClient)
-    };
+    arangoMocks = mockArango();
+    arangojs = arangoMocks.arangojs;
     mockery.registerMock('arangojs', arangojs);
-    mockery.registerMock('redis', redis);
+    redisMocks = mockRedis();
+    mockery.registerMock('redis', redisMocks.redis);
     mockery.enable({ useCleanCache: true });
     mockery.warnOnUnregistered(false);
     application = require('../../src/application');
@@ -98,9 +40,8 @@ describe('/auth_callback', () => {
     server.stop();
     mockery.disable();
     mockery.deregisterAll();
-    Object.keys(rawArango).forEach(member => {
-      rawArango[member].restore();
-    });
+    arangoMocks.reset();
+    redisMocks.reset();
   });
 
   describe('successful path', () => {
@@ -123,7 +64,7 @@ describe('/auth_callback', () => {
             oauth_token_secret: 'shhh'
           }
         );
-      rState.token = 'value';
+      redisMocks.rState.token = 'value';
       response = await server.inject({
         method: 'GET',
         url: `${root}/auth_callback?oauth_token=token&oauth_verifier=verifier`
@@ -150,7 +91,7 @@ describe('/auth_callback', () => {
           .reply(
             expectedStatus
           );
-        rState.token = 'value';
+        redisMocks.rState.token = 'value';
         response = await server.inject({
           method: 'GET',
           url: `${root}/auth_callback?oauth_token=token&oauth_verifier=verifier`
@@ -183,7 +124,7 @@ describe('/auth_callback', () => {
       )
         .post('/oauth/access_token')
         .replyWithError(error);
-      rState.token = 'value';
+      redisMocks.rState.token = 'value';
       response = await server.inject({
         method: 'GET',
         url: `${root}/auth_callback?oauth_token=token&oauth_verifier=verifier`
@@ -216,7 +157,7 @@ describe('/auth_callback', () => {
       )
         .post('/oauth/access_token')
         .replyWithError(error);
-      rState.token = 'value';
+      redisMocks.rState.token = 'value';
       response = await server.inject({
         method: 'GET',
         url: `${root}/auth_callback?oauth_token=token&oauth_verifier=verifier`

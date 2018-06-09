@@ -6,7 +6,7 @@ const getRequestToken = require('./getRequestToken');
 const expiry = 5 * 60;
 
 function constructRedirect({ token }) {
-  return `https://api.twitter.com/oauth/authenticate?oauth_token=${token}`;
+  return `https://api.twitter.com/oauth/authenticate?oauth_token=${encodeURIComponent(token)}`;
 }
 
 module.exports = async function getAuthenticationRedirectUri() {

@@ -1,10 +1,4 @@
-const Boom = require('boom');
 const Path = require('path');
-
-const {
-  getAuthenticationRedirectUri
-} = require('./twitter');
-const { handleError } = require('./util');
 
 module.exports = {
   routes: {
@@ -17,19 +11,13 @@ module.exports = {
       method: 'GET',
       path: '/',
       handler: {
-          file: 'index.html'
+        file: 'index.html'
       }
     },
     {
       method: 'POST',
       path: '/authenticate',
-      handler: async (request, h) => {
-        try {
-          return await getAuthenticationRedirectUri();
-        } catch (err) {
-          handleError(err);
-        }
-      }
+      handler: require('./operations/authenticate')
     },
     {
       method: 'GET',
