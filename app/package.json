@@ -13,10 +13,13 @@
   },
   "dependencies": {
     "arangojs": "^6.2.4",
+    "good": "^8.1.1",
     "hapi": "^17.4.0",
     "inert": "^5.1.0",
     "lodash": "^4.17.10",
     "oauth": "^0.9.15",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
     "redis": "^2.8.0",
     "twitter": "^1.7.1"
   },

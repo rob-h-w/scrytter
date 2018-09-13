@@ -14,12 +14,25 @@ let rClient = redis.createClient(rOptions);
 
 let initialized = false;
 
+
 async function initializeApp() {
   if (initialized) {
     return;
   }
 
-  await init();
+  let noArango = true;
+
+  while(noArango) {
+    try {
+      await init();
+      noArango = false;
+    } catch (e) {
+      console.warn('failed to get an ArangoDb connection retrying.');
+      await new Promise(resolve => {
+        setTimeout(resolve, 1000);
+      });
+    }
+  }
 
   rClient = await rClient;
   application.redis = rClient;
@@ -54,6 +67,10 @@ async function start() {
         });
 
         await server.register(require('inert'));
+        await server.register({
+          plugin: require('good'),
+          opts: {}
+        });
 
         server.route(apiRoutes);
 
