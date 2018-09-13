@@ -70,6 +70,12 @@ Run:
 $ docker-compose -f docker-compose.yml -f docker-compose.test.yml up --build unit
 ```
 
+### API
+Run:
+``` bash
+$ docker-compose -f docker-compose.yml -f docker-compose.test.yml up --build api
+```
+
 ### Integration
 To use replayer to replay integration tests, refer to [setting up the environment variables](#integration-test-env), then run:
 ``` bash
