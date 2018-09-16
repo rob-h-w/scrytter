@@ -1,13 +1,18 @@
+const bunyan = require('bunyan');
 const { expect } = require('code');
 const { afterEach, after, beforeEach, before, describe, it } = exports.lab = require('lab').script();
 const mockery = require('mockery');
 const nock = require('nock');
+const sinon = require('sinon');
 
 const mockArango = require('./mockArango');
 const mockRedis = require('./mockRedis');
 
 const root = 'http://localhost';
 
+const logTemplate = bunyan.createLogger({
+  name: 'test'
+});
 const oauth_token = 'oauth_token';
 const oauth_token_secret = 'oauth secret';
 const results = {};
@@ -16,6 +21,8 @@ describe('/authenticate', () => {
   let application;
   let arangojs;
   let arangoMocks;
+  let bunyanMock;
+  let bunyanStub;
   let redisMocks;
   let response;
   let server;
@@ -32,6 +39,15 @@ describe('/authenticate', () => {
     arangoMocks = mockArango();
     arangojs = arangoMocks.arangojs;
     mockery.registerMock('arangojs', arangojs);
+
+    bunyanMock = sinon.mock(logTemplate);
+    bunyanMock.expects('child').atLeast(1).returns(logTemplate);
+    bunyanMock.expects('info');
+    bunyanStub = {
+      createLogger: sinon.stub().returns(logTemplate)
+    };
+    mockery.registerMock('bunyan', bunyanStub);
+
     redisMocks = mockRedis();
     mockery.registerMock('redis', redisMocks.redis);
     mockery.enable({ useCleanCache: true });
@@ -44,6 +60,8 @@ describe('/authenticate', () => {
     server.stop();
     mockery.disable();
     mockery.deregisterAll();
+    bunyanMock.verify();
+    bunyanMock.restore();
     arangoMocks.reset();
     redisMocks.reset();
   });

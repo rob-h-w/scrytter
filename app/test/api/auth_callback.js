@@ -1,17 +1,24 @@
+const bunyan = require('bunyan');
 const { expect } = require('code');
 const { afterEach, after, beforeEach, before, describe, it } = exports.lab = require('lab').script();
 const mockery = require('mockery');
 const nock = require('nock');
+const sinon = require('sinon');
 
 const mockArango = require('./mockArango');
 const mockRedis = require('./mockRedis');
 
+const logTemplate = bunyan.createLogger({
+  name: 'test'
+});
 const root = 'http://localhost';
 
 describe('/auth_callback', () => {
   let application;
   let arangojs;
   let arangoMocks;
+  let bunyanMock;
+  let bunyanStub;
   let redisMocks;
   let response;
   let server;
@@ -28,6 +35,15 @@ describe('/auth_callback', () => {
     arangoMocks = mockArango();
     arangojs = arangoMocks.arangojs;
     mockery.registerMock('arangojs', arangojs);
+
+    bunyanMock = sinon.mock(logTemplate);
+    bunyanMock.expects('child').atLeast(1).returns(logTemplate);
+    bunyanMock.expects('info');
+    bunyanStub = {
+      createLogger: sinon.stub().returns(logTemplate)
+    };
+    mockery.registerMock('bunyan', bunyanStub);
+
     redisMocks = mockRedis();
     mockery.registerMock('redis', redisMocks.redis);
     mockery.enable({ useCleanCache: true });
@@ -40,6 +56,8 @@ describe('/auth_callback', () => {
     server.stop();
     mockery.disable();
     mockery.deregisterAll();
+    bunyanMock.verify();
+    bunyanMock.restore();
     arangoMocks.reset();
     redisMocks.reset();
   });
@@ -92,6 +110,7 @@ describe('/auth_callback', () => {
             expectedStatus
           );
         redisMocks.rState.token = 'value';
+        bunyanMock.expects('error');
         response = await server.inject({
           method: 'GET',
           url: `${root}/auth_callback?oauth_token=token&oauth_verifier=verifier`
@@ -125,6 +144,7 @@ describe('/auth_callback', () => {
         .post('/oauth/access_token')
         .replyWithError(error);
       redisMocks.rState.token = 'value';
+      bunyanMock.expects('error');
       response = await server.inject({
         method: 'GET',
         url: `${root}/auth_callback?oauth_token=token&oauth_verifier=verifier`
@@ -158,6 +178,7 @@ describe('/auth_callback', () => {
         .post('/oauth/access_token')
         .replyWithError(error);
       redisMocks.rState.token = 'value';
+      bunyanMock.expects('error');
       response = await server.inject({
         method: 'GET',
         url: `${root}/auth_callback?oauth_token=token&oauth_verifier=verifier`

@@ -1,7 +1,9 @@
 const hapi = require('hapi');
-const { init } = require('./arango');
 const redis = require('redis');
 const { promisify } = require('util');
+
+const { init } = require('./arango');
+const logger = require('./logger').get();
 
 const application = {};
 
@@ -13,7 +15,6 @@ const rOptions = {
 let rClient = redis.createClient(rOptions);
 
 let initialized = false;
-
 
 async function initializeApp() {
   if (initialized) {
@@ -27,7 +28,7 @@ async function initializeApp() {
       await init();
       noArango = false;
     } catch (e) {
-      console.warn('failed to get an ArangoDb connection retrying.');
+      logger.warn('failed to get an ArangoDb connection retrying.');
       await new Promise(resolve => {
         setTimeout(resolve, 1000);
       });
@@ -37,7 +38,7 @@ async function initializeApp() {
   rClient = await rClient;
   application.redis = rClient;
 
-  application.redis.on('error', console.error);
+  application.redis.on('error', logger.error);
 
   Object.entries(rClient.__proto__).forEach(([key, value]) => {
     if (typeof value !== 'function'
@@ -75,11 +76,11 @@ async function start() {
         server.route(apiRoutes);
 
         await server.start();
-        console.log('Server started at: ' + server.info.uri);
+        logger.info('Server started at: ' + server.info.uri);
         return server;
     }
     catch (err) {
-        console.error(err);
+        logger.error(err);
         process.exit(1);
     }
 }

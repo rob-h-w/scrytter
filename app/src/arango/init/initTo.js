@@ -2,6 +2,7 @@ const _ = require('lodash');
 
 const ensureDb = require('./ensureDb');
 const getCurrentVersion = require('./getCurrentVersion');
+const logger = require('../../logger').get();
 
 module.exports = function initTo(desiredVersion) {
   return async function init(current) {
@@ -35,7 +36,7 @@ module.exports = function initTo(desiredVersion) {
           await rollback(currentVersion);
         }
 
-        console.error(`exiting with db at version ${initialVersion}`);
+        logger.error(`exiting with db at version ${initialVersion}`);
         throw e;
       }
     }

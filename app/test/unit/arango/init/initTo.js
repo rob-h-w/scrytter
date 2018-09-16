@@ -1,19 +1,25 @@
+const bunyan = require('bunyan');
 const { expect } = require('code');
-const { beforeEach, describe, it } = exports.lab = require('lab').script();
+const { afterEach, beforeEach, describe, it } = exports.lab = require('lab').script();
 const proxyquire = require('proxyquire').noCallThru();
 const sinon = require('sinon');
 
+const logTemplate = bunyan.createLogger({
+  name: 'test'
+});
+
 describe('arango/initTo', () => {
-  let db;
+  let bunyanMock;
   let ensureDb;
   let getCurrentVersion;
   let init;
   let initTo;
   let migration1;
   let migration2;
-  let result;
 
   beforeEach(() => {
+    bunyanMock = sinon.mock(logTemplate);
+
     ensureDb = sinon.stub().resolves();
     getCurrentVersion = sinon.stub();
     migration1 = {
@@ -31,8 +37,14 @@ describe('arango/initTo', () => {
       {
         './ensureDb': ensureDb,
         './getCurrentVersion': getCurrentVersion,
+        '../../logger': { get: () => logTemplate },
         '../v1': {}
       });
+  });
+
+  afterEach(() => {
+    bunyanMock.verify();
+    bunyanMock.restore();
   });
 
   it('exists', () => {
@@ -51,6 +63,7 @@ describe('arango/initTo', () => {
         {
           './ensureDb': ensureDb,
           './getCurrentVersion': getCurrentVersion,
+          '../../logger': { get: () => logTemplate },
           '../v1': migration1
         });
       init = initTo(1);
@@ -92,6 +105,8 @@ describe('arango/initTo', () => {
       beforeEach(async () => {
         migration1.setup.rejects(new Error());
 
+        bunyanMock.expects('error');
+
         try {
           await init();
         } catch (e) {
@@ -119,6 +134,8 @@ describe('arango/initTo', () => {
       beforeEach(async () => {
         migration1.verify.rejects(new Error());
 
+        bunyanMock.expects('error');
+
         try {
           await init();
         } catch (e) {
@@ -140,6 +157,7 @@ describe('arango/initTo', () => {
         {
           './ensureDb': ensureDb,
           './getCurrentVersion': getCurrentVersion,
+          '../../logger': { get: () => logTemplate },
           '../v1': migration1,
           '../v2': migration2
         });
@@ -177,6 +195,8 @@ describe('arango/initTo', () => {
       beforeEach(async () => {
         migration2.setup.rejects(new Error());
 
+        bunyanMock.expects('error');
+
         try {
           result = await init();
         } catch (e) {
@@ -212,6 +232,8 @@ describe('arango/initTo', () => {
         migration2.verify.rejects(new Error());
         migration2.rollback.rejects(new Error);
 
+        bunyanMock.expects('error');
+
         try {
           result = await init();
         } catch (e) {
@@ -244,6 +266,7 @@ describe('arango/initTo', () => {
         {
           './ensureDb': ensureDb,
           './getCurrentVersion': getCurrentVersion,
+          '../../logger': { get: () => logTemplate },
           '../v1': migration1
         });
       init = initTo(1);

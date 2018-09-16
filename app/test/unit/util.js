@@ -1,13 +1,36 @@
 const assert = require('assert');
 const boom = require('boom');
+const bunyan = require('bunyan');
 const { expect } = require('code');
-const { after, before, beforeEach, describe, it } = exports.lab = require('lab').script();
+const { afterEach, beforeEach, describe, it } = exports.lab = require('lab').script();
 const proxyquire = require('proxyquire').noCallThru();
 const sinon = require('sinon');
 
+const logTemplate = bunyan.createLogger({
+  name: 'test'
+});
+
 describe('util', () => {
+  let bunyanMock;
+  let util;
+
+  beforeEach(() => {
+    bunyanMock = sinon.mock(logTemplate);
+    util = proxyquire('../../src/util', {
+      './logger': { get: () => logTemplate }
+    });
+  });
+
+  afterEach(() => {
+    bunyanMock.restore();
+  });
+
   describe('boomifyStatusCode', () => {
-    const { boomifyStatusCode } = require('../../src/util');
+    let boomifyStatusCode;
+
+    beforeEach(() => {
+      boomifyStatusCode = util.boomifyStatusCode;
+    });
 
     [
       {
@@ -83,22 +106,20 @@ describe('util', () => {
           expect(boomified.isBoom).to.be.true();
           expect(boomified.statusCode).to.equal(c.boomified.statusCode);
         }
+
+        bunyanMock.verify();
       });
     });
   });
 
   describe('handleError', () => {
-    const { handleError } = require('../../src/util');
-
-    before(() => {
-      sinon.stub(console, 'error');
-    });
-
-    after(() => {
-      console.error.restore();
-    });
-
     const bException = boom.badRequest();
+
+    let handleError;
+
+    beforeEach(() => {
+      handleError = util.handleError;
+    });
 
     [
       {
@@ -125,6 +146,10 @@ describe('util', () => {
       it(c.name, () => {
         let e;
 
+        if (c.params[0] !== null) {
+          bunyanMock.expects('error');
+        }
+
         try {
           handleError(...c.params);
         } catch (exception) {
@@ -140,6 +165,8 @@ describe('util', () => {
         } else {
           expect(e).not.to.exist();
         }
+
+        bunyanMock.verify();
       });
     });
   });

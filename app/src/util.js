@@ -2,6 +2,8 @@ const assert = require('assert');
 const boom = require('boom');
 const _ = require('lodash');
 
+const logger = require('./logger').get();
+
 /**
  * Boomify non-error objects.
  *
@@ -50,7 +52,7 @@ function boomifyStatusCode(root, selector = 'statusCode') {
 function handleError(err, selector) {
   assert(err, 'err must exist.');
 
-  console.error(err);
+  logger.error(err);
   if (!err.isBoom) {
     if (err instanceof Error) {
       err = boom.boomify(err);
